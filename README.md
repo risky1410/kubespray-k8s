@@ -42,37 +42,6 @@ Cụ thể, Kubespray cung cấp:
 
 `cp -rfp inventory/sample inventory/mycluster`
 
-**Sửa inventory/mycluster/hosts.yaml để khai báo các node (master, worker).**
-
-```all:
-  hosts:
-    master1:
-      ansible_host: 192.168.1.10
-      ip: 192.168.1.10
-      access_ip: 192.168.1.10
-    worker1:
-      ansible_host: 192.168.1.11
-      ip: 192.168.1.11
-      access_ip: 192.168.1.11
-
-  children:
-    kube_control_plane:
-      hosts:
-        master1:
-    kube_node:
-      hosts:
-        worker1:
-    etcd:
-      hosts:
-        master1:
-    k8s_cluster:
-      children:
-        kube_control_plane:
-        kube_node:
-    calico_rr:
-      hosts: {}
-```
-
 **Chuẩn bị môi trường**
 
 1. Cài đặt python
@@ -107,6 +76,67 @@ python3.10 -m venv venv-kubespray
 pip install --upgrade pip
 pip install "ansible-core>=2.15,<2.18"
 ```
+
+**Cài requirements của Kubespray**
+
+`pip install -r requirements.txt`
+
+
+**Sửa inventory/mycluster/hosts.yaml để khai báo các node (master, worker).**
+
+```
+all:
+  hosts:
+    master1:
+      ansible_host: 192.168.1.10
+      ip: 192.168.1.10
+      access_ip: 192.168.1.10
+    worker1:
+      ansible_host: 192.168.1.11
+      ip: 192.168.1.11
+      access_ip: 192.168.1.11
+
+  children:
+    kube_control_plane:
+      hosts:
+        master1:
+    kube_node:
+      hosts:
+        worker1:
+    etcd:
+      hosts:
+        master1:
+    k8s_cluster:
+      children:
+        kube_control_plane:
+        kube_node:
+    calico_rr:
+      hosts: {}
+```
+
+**Triển khai Kubernetes Cluster**
+
+`ansible-playbook -i inventory/mycluster/hosts.yaml cluster.yml -b -v`
+
+ *Nếu gặp lỗi yêu cầu mật khẩu*
+
+ **Cho phép user trên các node sudo không cần password**
+
+ 1. Trên cả master1 và worker1, SSH vào rồi chạy:
+
+`sudo visudo`
+
+2. Thêm dòng (giả sử user bạn dùng để SSH là ubuntu):
+
+`ubuntu ALL=(ALL) NOPASSWD: ALL`
+
+**Rồi test:**
+
+`kubectl get nodes`
+
+
+
+
 
 
 
