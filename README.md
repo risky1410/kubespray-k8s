@@ -134,6 +134,45 @@ all:
 
 `kubectl get nodes`
 
+(fix)
+
+**mở**
+
+`nano inventory/mycluster/group_vars/all/download.yml`
+
+nội dung:
+
+```
+---
+## Directory where to cache downloaded files
+## Nếu bạn không muốn cache → để false
+download_cache_dir: false
+
+## Keep the package cache on the hosts
+download_keep_remote_cache: false
+
+## Run download tasks only once for all hosts
+download_run_once: true
+
+## Nếu bạn muốn tải file về localhost rồi phân phối lại cho các node → bật lên
+download_localhost: true
+
+## Có verify checksum khi tải file không
+download_verify_checksum: true
+
+## Dùng ipv6 khi tải (nếu có)
+download_use_ipv6: false
+
+## Timeout khi tải file (giây)
+download_connect_timeout: 20
+download_retries: 4
+download_delay: 5
+```
+
+
+
+
+
 
 
 
